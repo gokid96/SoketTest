@@ -1,4 +1,4 @@
-# MatipConnet
+# WebSocket & STOMP Testing Tool
 
 A web application project based on Vue 3.
 
