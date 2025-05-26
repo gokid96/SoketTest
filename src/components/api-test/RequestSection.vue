@@ -23,7 +23,7 @@
       <!-- URL 입력 -->
       <div class="flex flex-col mb-4 sm:flex-row px-2 gap-x-1.5 gap-y-2">
         <input type="text" v-model="url"
-          :placeholder="protocolType === 'stomp' ? 'ws://localhost:8080/ws' : 'ws://localhost:8080/ws'" class="dark:bg-dark-900 h-11 w-full border border-gray-600
+          :placeholder="protocolType === 'stomp' ? 'ws://localhost:8080/stomp' : 'ws://localhost:8080/websocket'" class="dark:bg-dark-900 h-11 w-full border border-gray-600
                 bg-transparent py-2.5 px-3 pr-14 text-sm text-gray-800 shadow-theme-xs
                 placeholder:text-gray-400 dark:border-gray-800 dark:bg-gray-900
                 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30

@@ -6,7 +6,7 @@
     <Sidebar />
 
     <!-- 메인 컨텐츠 -->
-    <main class="ml-38 pt-16 pl-6">
+    <main class="bg-gray-100 ml-38 pt-16 pl-6 min-h-screen">
       <RouterView />
     </main>
   </div>

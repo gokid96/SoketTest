@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed top-0 left-0 right-0 border-b border-gray-600 backdrop-blur-lg z-50">
+  <header class="bg-gray-200 fixed top-0 left-0 right-0 border-b border-gray-600 backdrop-blur-lg z-50">
     <nav class="container md:max-w-4xl mx-auto px-0 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <h1 class="text-black text-2xl font-bold">Soket TEST</h1>
