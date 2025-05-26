@@ -1,35 +1,70 @@
-# matipconnet
+# MatipConnet
 
-This template should help get you started developing with Vue 3 in Vite.
+A web application project based on Vue 3.
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Vue 3
+- Vite
+- Vue Router
+- TailwindCSS
+- WebSocket,STOMP
+- Monaco Editor
 
-## Customize configuration
+## Key Features
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- Real-time WebSocket communication
+- Integrated code editor
+- Modern UI/UX
 
-## Project Setup
+## Getting Started
 
-```sh
+### Prerequisites
+
+- Node.js (Latest LTS version recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+# Install dependencies
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Development Server
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Build
 
-```sh
+```bash
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Linting and Formatting
 
-```sh
+```bash
+# Run linter
 npm run lint
+
+# Format code
+npm run format
 ```
+
+## Project Structure
+
+```
+src/
+├── assets/      # Static assets
+├── components/  # Reusable components
+├── router/      # Routing configuration
+├── views/       # Page components
+├── App.vue      # Root component
+└── main.js      # Application entry point
+```
+
+## License
+
+This project is protected under a private license.
