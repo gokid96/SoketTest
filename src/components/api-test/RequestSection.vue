@@ -302,7 +302,7 @@ function connectStomp() {
           protocol: 'stomp'
         });
 
-        // 🔥 핵심: 연결 후 잠시 대기 후 구독 (안정성 향상)
+        //: 연결 후 잠시 대기 후 구독 (안정성 향상)
         if (stompSubscription.value) {
           setTimeout(() => {
             if (isConnected.value && stompClient.value) {
@@ -317,7 +317,7 @@ function connectStomp() {
         isConnected.value = false;
         isConnecting.value = false;
 
-        // 🔥 구독 정리
+        //  구독 정리
         subscriptions.value.forEach(sub => {
           try {
             sub.subscription?.unsubscribe();
@@ -340,7 +340,7 @@ function connectStomp() {
         isConnected.value = false;
         isConnecting.value = false;
 
-        // 🔥 에러 시에도 구독 정리
+        //  에러 시에도 구독 정리
         subscriptions.value.forEach(sub => {
           try {
             sub.subscription?.unsubscribe();
@@ -391,7 +391,7 @@ function disconnect() {
   }
 
   if (protocolType.value === 'stomp' && stompClient.value) {
-    // 핵심: 구독을 먼저 개별적으로 해제
+    //  구독을 먼저 개별적으로 해제
     subscriptions.value.forEach(sub => {
       try {
         console.log('구독 해제:', sub.destination, sub.id);
@@ -507,7 +507,7 @@ function subscribeToTopic() {
       });
     });
 
-    // 🔥 핵심: 실제 구독 객체도 함께 저장
+    //  실제 구독 객체도 함께 저장
     subscriptions.value.push({
       id: subscription.id,
       destination: stompSubscription.value,
