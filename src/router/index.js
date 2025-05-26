@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 
-const MatipTest = () => import('../views/MatipTest.vue')
+const MatipTest = () => import('../views/SoketTest.vue')
 
 // 라우트 정의
 const routes = [
