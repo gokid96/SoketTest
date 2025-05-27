@@ -43,14 +43,16 @@
     </form>
 
     <!-- STOMP 추가 설정 -->
-    <div v-if="protocolType === 'stomp'" class="mb-4 px-2 transition-all duration-200">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-        <input v-model="stompDestination" placeholder="Destination (e.g., /app/chat)" class="h-9 border border-gray-600 bg-transparent px-3 text-sm text-gray-800
+    <div class="mb-4 px-2 min-h-1">
+      <div v-if="protocolType === 'stomp'" class="mb-4 ">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+          <input v-model="stompDestination" placeholder="Destination (e.g., /app/chat)" class="h-9 border border-gray-600 bg-transparent px-3 text-sm text-gray-800
                 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90
                 placeholder:text-gray-400 dark:placeholder:text-white/30" />
-        <input v-model="stompSubscription" placeholder="Subscribe to (e.g., /topic/messages)" class="h-9 border border-gray-600 bg-transparent px-3 text-sm text-gray-800
+          <input v-model="stompSubscription" placeholder="Subscribe to (e.g., /topic/messages)" class="h-9 border border-gray-600 bg-transparent px-3 text-sm text-gray-800
                 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90
                 placeholder:text-gray-400 dark:placeholder:text-white/30" />
+        </div>
       </div>
       <button v-if="isConnected && stompClient" @click="subscribeToTopic" :disabled="!stompSubscription" class="text-xs px-3 py-1 border border-gray-600 bg-gray-50 text-gray-700 hover:bg-gray-100
               dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300
