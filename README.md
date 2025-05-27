@@ -1,4 +1,4 @@
-# WebSocket & STOMP Testing Tool
+# Socket Testing Tool
 
 A web application project based on Vue 3.
 
