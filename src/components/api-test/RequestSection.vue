@@ -8,24 +8,30 @@
       <!-- 프로토콜 선택 -->
       <div class="flex gap-2 mb-4 px-2">
         <label class="flex items-center cursor-pointer">
-          <input type="radio" v-model="protocolType" value="websocket" name="protocol" :disabled="isConnecting"
+          <input type="radio" v-model="protocolType" value="websocket" name="protocol" :disabled="isConnected"
             class="mr-2">
           <span class="text-sm text-gray-700 dark:text-gray-300">WebSocket</span>
         </label>
         <label class="flex items-center cursor-pointer">
-          <input type="radio" v-model="protocolType" value="stomp" name="protocol" :disabled="isConnecting"
-            class="mr-2">
+          <input type="radio" v-model="protocolType" value="stomp" name="protocol" :disabled="isConnected" class="mr-2">
           <span class="text-sm text-gray-700 dark:text-gray-300">STOMP</span>
+        </label>
+        <label class="flex items-center cursor-pointer">
+          <input type="radio" v-model="protocolType" value="matip" name="protocol" :disabled="isConnected" class="mr-2">
+          <span class="text-sm text-gray-700 dark:text-gray-300">MATIP</span>
         </label>
       </div>
 
 
       <!-- URL 입력 -->
       <div class="flex flex-col mb-4 sm:flex-row px-2 gap-x-1.5 gap-y-2">
-        <input type="text" v-model="url"
-          :placeholder="protocolType === 'stomp' ? 'ws://localhost:8080/stomp' : 'ws://localhost:8080/websocket'" class="dark:bg-dark-900 h-11 w-full border border-gray-600
+        <input type="text" v-model="url" :placeholder="protocolType === 'stomp' ? 'ws://localhost:8080/stomp' :
+          protocolType === 'websocket' ? 'ws://localhost:8080/websocket' :
+            'matip://localhost:8080/matip'" class="dark:bg-dark-900 h-11 w-full border border-gray-600
                 bg-transparent py-2.5 px-3 pr-14 text-sm text-gray-800 shadow-theme-xs
-                placeholder:text-gray-400 dark:border-gray-800 dark:bg-gray-900
+                placeholder:text-gray-400 focus:placeholder:opacity-0
+
+                dark:border-gray-800 dark:bg-gray-900
                 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30
                 dark:focus:border-brand-800" />
         <button type="submit" class="whitespace-nowrap border border-gray-600 bg-gray-50 px-5 py-2 text-sm text-gray-700 hover:bg-gray-100
@@ -109,17 +115,13 @@ import MonacoEditor from 'monaco-editor-vue3';
 
 
 const editorLanguage = ref('json'); // 'json', 'javascript', 'plaintext' 등
-
-
 const emit = defineEmits(['message-received', 'message-sent', 'connection-status']);
 
 // 기본 설정
 const protocolType = ref('websocket'); // 기본값: websocket
 const url = ref('');
 const isConnected = ref(false);
-const isConnecting = ref(false);
 const messageText = ref('');
-// const messageEditor = ref(null);
 
 // WebSocket 관련
 const socket = ref(null);
@@ -133,7 +135,7 @@ const subscriptions = ref([]);
 //  핵심 개선: protocolType 변경 감지
 watch(protocolType, (newProtocol, oldProtocol) => {
   emit('connection-change', {
-    connected: !false,
+    connected: isConnected.value,
   });
   // 초기 로딩이 아니고, 연결된 상태일 때만 실행
   if (oldProtocol && isConnected.value) {
@@ -213,12 +215,12 @@ function connect() {
     return;
   }
 
-  isConnecting.value = true;
-
   if (protocolType.value === 'stomp') {
     connectStomp();
-  } else {
+  } else if (protocolType.value === 'websocket') {
     connectWebSocket();
+  } else if (protocolType.value === 'matip') {
+    connectMatip();
   }
 }
 
@@ -229,7 +231,7 @@ function connectWebSocket() {
 
     socket.value.onopen = (event) => {
       isConnected.value = true;
-      isConnecting.value = false;
+
       emit('connection-status', {
         connected: true,
         message: 'Connected to WebSocket server',
@@ -250,7 +252,7 @@ function connectWebSocket() {
 
     socket.value.onclose = (event) => {
       isConnected.value = false;
-      isConnecting.value = false;
+
       emit('connection-status', {
         connected: false,
         message: 'WebSocket disconnected',
@@ -261,7 +263,7 @@ function connectWebSocket() {
 
     socket.value.onerror = (error) => {
       isConnected.value = false;
-      isConnecting.value = false;
+
       emit('connection-status', {
         connected: false,
         message: 'WebSocket connection error',
@@ -271,7 +273,6 @@ function connectWebSocket() {
     };
 
   } catch (error) {
-    isConnecting.value = false;
     emit('connection-status', {
       connected: false,
       message: 'WebSocket connection failed',
@@ -295,13 +296,11 @@ function connectStomp() {
       onConnect: (frame) => {
         console.log('STOMP 연결 성공:', frame);
         isConnected.value = true;
-        isConnecting.value = false;
         emit('connection-status', {
           connected: true,
           message: 'Connected to ' + url.value,
           protocol: 'stomp'
         });
-
         //: 연결 후 잠시 대기 후 구독 (안정성 향상)
         if (stompSubscription.value) {
           setTimeout(() => {
@@ -315,8 +314,6 @@ function connectStomp() {
       onDisconnect: () => {
         console.log('STOMP 연결 해제');
         isConnected.value = false;
-        isConnecting.value = false;
-
         //  구독 정리
         subscriptions.value.forEach(sub => {
           try {
@@ -326,20 +323,16 @@ function connectStomp() {
           }
         });
         subscriptions.value = [];
-
         emit('connection-status', {
           connected: false,
           message: 'STOMP disconnected',
           protocol: 'stomp'
         });
       },
-
       onStompError: (frame) => {
         console.error('STOMP 에러:', frame.headers['message']);
         console.error('자세한 내용:', frame.body);
         isConnected.value = false;
-        isConnecting.value = false;
-
         //  에러 시에도 구독 정리
         subscriptions.value.forEach(sub => {
           try {
@@ -349,7 +342,6 @@ function connectStomp() {
           }
         });
         subscriptions.value = [];
-
         emit('connection-status', {
           connected: false,
           message: `STOMP error: ${frame.headers['message']}`,
@@ -358,16 +350,18 @@ function connectStomp() {
       },
 
       onWebSocketError: (error) => {
+        emit('connection-status', {
+          connected: false,
+          message: 'STOMP error' + error,
+          protocol: 'stomp'
+        });
         console.error('STOMP WebSocket 에러:', error);
         isConnected.value = false;
-        isConnecting.value = false;
+
       }
     });
-
     stompClient.value.activate();
-
   } catch (error) {
-    isConnecting.value = false;
     emit('connection-status', {
       connected: false,
       message: 'STOMP connection failed',
@@ -377,16 +371,21 @@ function connectStomp() {
   }
 }
 
+
+function connectMatip() {
+  console.log("매팁눌림")
+    ;
+}
+
 // 연결 해제
 function disconnect() {
   console.log('Disconnecting...', {
     isConnected: isConnected.value,
-    isConnecting: isConnecting.value,
     protocol: protocolType.value
   });
 
   // 연결되지 않은 상태면 일찍 리턴
-  if (!isConnected.value && !isConnecting.value) {
+  if (!isConnected.value) {
     return;
   }
 
@@ -411,10 +410,7 @@ function disconnect() {
     socket.value.close();
     socket.value = null;
   }
-
   isConnected.value = false;
-  isConnecting.value = false;
-
   console.log('Disconnected successfully');
 }
 
@@ -438,15 +434,20 @@ function sendMessage() {
 
 // WebSocket 메시지 전송
 function sendWebSocketMessage() {
-  socket.value.send(messageText.value);
-  emit('message-sent', {
-    content: messageText.value,
-    timestamp: new Date().toLocaleTimeString(),
-    type: 'sent',
-    protocol: 'websocket'
-  });
-  console.log('WebSocket 메시지 전송:', messageText.value);
-  // clearMessage();
+  if (socket.value.readyState === WebSocket.OPEN) {
+    socket.value.send(messageText.value);
+    emit('message-sent', {
+      content: messageText.value,
+      timestamp: new Date().toLocaleTimeString(),
+      type: 'sent',
+      protocol: 'websocket'
+    });
+    console.log('WebSocket 메시지 전송:', messageText.value);
+  } else {
+    console.warn('WebSocket이 연결되지 않음. 상태:', socket.value.readyState);
+    // 재연결 시도하거나 사용자에게 알림
+    // handleWebSocketError();
+  }
 }
 
 // STOMP 메시지 전송
