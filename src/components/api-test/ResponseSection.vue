@@ -1,8 +1,17 @@
 <template>
   <div class="pt-5 px-1 md:min-w-2xl">
-    <h2 class="text-xl flex items-center mb-2 pl-2">
-      Response
-    </h2>
+    <!-- Header와 Clear 버튼을 함께 배치 -->
+    <div class="flex justify-between items-center mb-2 px-2">
+      <h2 class="text-xl flex items-center">
+        Response
+      </h2>
+
+      <button @click="clearMessages" :disabled="messages.length <= 0" class="ml-auto border px-8 py-2 border-gray-600 bg-gray-50 text-sm text-gray-700 hover:bg-gray-100
+                  dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.05]
+                  disabled:opacity-50 disabled:cursor-not-allowed">
+        Clear
+      </button>
+    </div>
 
     <section class="mb-4 px-2 dark:border-gray-800">
       <!-- WebSocket 메시지 표시 -->
@@ -91,10 +100,12 @@
       <div v-else-if="(!messages || messages.length === 0)"
         class="text-sm border border-gray-600 min-h-45  max-h-45 min-w-[200px] flex items-start justify-center text-gray-500">
         <span class="my-auto">Establish a connection to send and receive messages.</span>
-
       </div>
+
     </section>
+
   </div>
+
 </template>
 
 <script setup>
@@ -115,6 +126,13 @@ const props = defineProps({
     default: () => []
   }
 });
+
+const emit = defineEmits(['clear-messages']);
+//메세지 클리어
+function clearMessages() {
+  expandedMessages.value.clear();
+  emit('clear-messages');
+}
 
 // 펼쳐진 메시지들을 추적하는 Set
 const expandedMessages = ref(new Set());

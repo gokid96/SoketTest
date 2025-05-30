@@ -1,7 +1,9 @@
 <template>
-  <div class="px-1 border-b border-gray-700 md:min-w-2xl">
+  <!-- <div class="px-1 border-b border-gray-700 md:min-w-2xl "> -->
+  <div class="px-1 border-b border-gray-700 md:min-w-2xl ">
     <form @submit.prevent="connect">
-      <h2 class="text-xl flex items-center mb-2 pl-2">
+
+      <h2 class="text-xl flex items-center mb-2 px-2">
         Request
       </h2>
 
@@ -24,16 +26,38 @@
 
 
       <!-- URL 입력 -->
-      <div class="flex flex-col mb-4 sm:flex-row px-2 gap-x-1.5 gap-y-2">
+      <div class="flex flex-col mb-4 sm:flex-row px-2 gap-x-1.5 gap-y-2 mt-5">
         <input type="text" v-model="url" :placeholder="protocolType === 'stomp' ? 'ws://localhost:8080/stomp' :
           protocolType === 'websocket' ? 'ws://localhost:8080/websocket' :
             'matip://localhost:8080/matip'" class="dark:bg-dark-900 h-11 w-full border border-gray-600
-                bg-transparent py-2.5 px-3 pr-14 text-sm text-gray-800 shadow-theme-xs
+                bg-transparent mr-3 py-2.5 px-3 pr-5 text-sm text-gray-800 shadow-theme-xs
                 placeholder:text-gray-400 focus:placeholder:opacity-0
 
                 dark:border-gray-800 dark:bg-gray-900
                 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30
                 dark:focus:border-brand-800" />
+
+        <template v-if="protocolType === 'matip'">
+          <div class="flex items-center gap-2">
+            <label for="" class="">H1</label>
+            <input type="text" :placeholder="'10'" class="dark:bg-dark-900 h-11 w-full  md:w-16 border border-gray-600
+                bg-transparent py-2.5 px-2 text-sm text-gray-800 shadow-theme-xs
+                placeholder:text-gray-400 focus:placeholder:opacity-0
+
+                dark:border-gray-800 dark:bg-gray-900
+                dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30
+                dark:focus:border-brand-800" />
+
+            <label for="">H2</label>
+            <input type="text" :placeholder="'10'" class="dark:bg-dark-900 h-11 w-full md:w-16 border border-gray-600
+                bg-transparent py-2.5 px-2  text-sm text-gray-800 shadow-theme-xs
+                placeholder:text-gray-400 focus:placeholder:opacity-0
+
+                dark:border-gray-800 dark:bg-gray-900
+                dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30
+                dark:focus:border-brand-800" />
+          </div>
+        </template>
         <button type="submit" class="whitespace-nowrap border border-gray-600 bg-gray-50 px-5 py-2 text-sm text-gray-700 hover:bg-gray-100
                 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300
                 dark:hover:bg-white/[0.05]">
@@ -43,7 +67,7 @@
     </form>
 
     <!-- STOMP 추가 설정 -->
-    <div class="mb-4 px-2 min-h-1">
+    <div class="mb-4 px-2 min-h-1 pt-4">
       <div v-if="protocolType === 'stomp'" class="mb-4 ">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
           <input v-model="stompDestination" placeholder="Destination (e.g., /app/chat)" class="h-9 border border-gray-600 bg-transparent px-3 text-sm text-gray-800
@@ -54,12 +78,34 @@
                 placeholder:text-gray-400 dark:placeholder:text-white/30" />
         </div>
       </div>
+
+      <div v-if="protocolType === 'matip'" class="mb-4 md:flex gap-2">
+        <div class="grid flex-1 gap-1">
+          <label for="L5AddressSource">L5AddressSource</label>
+          <input placeholder="XAAPPKR" class="  h-9 border   border-gray-600 bg-transparent px-3 text-sm text-gray-800
+                dark:border-gray-800 dark:bg-gray-900 dark:text-white/90
+                placeholder:text-gray-400 dark:placeholder:text-white/30" />
+        </div>
+
+        <div class="grid flex-1 gap-1">
+          <label for="Destination">Destination</label>
+          <input placeholder="TEIAPP" class=" h-9 border   border-gray-600 bg-transparent px-3 text-sm text-gray-800
+                dark:border-gray-800 dark:bg-gray-900 dark:text-white/90
+                placeholder:text-gray-400 dark:placeholder:text-white/30" />
+        </div>
+      </div>
+
       <button v-if="isConnected && stompClient" @click="subscribeToTopic" :disabled="!stompSubscription" class="text-xs px-3 py-1 border border-gray-600 bg-gray-50 text-gray-700 hover:bg-gray-100
               dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300
               dark:hover:bg-white/[0.05] disabled:opacity-50">
         Subscribe
       </button>
     </div>
+
+
+
+
+
 
     <section class="mb-4 px-2 dark:border-gray-800 rounded-lg">
       <!-- 메시지 입력 영역 -->
@@ -88,12 +134,7 @@
             Send
           </button>
 
-          <!-- Clear 버튼 -->
-          <!-- <button @click="clearMessageEditor" :disabled="!messageText.trim()" class="border px-4 py-2 border-gray-600 bg-gray-50 text-sm text-gray-700 hover:bg-gray-100
-                  dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.05]
-                  disabled:opacity-50 disabled:cursor-not-allowed">
-            Clear
-          </button> -->
+
         </div>
       </div>
     </section>

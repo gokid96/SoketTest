@@ -1,14 +1,23 @@
 <template>
-  <div class="min-h-screen">
-
+  <!-- <div class="min-h-screen flex flex-col">
     <Header />
-    <!-- 사이드바 -->
-    <Sidebar />
 
-    <!-- 메인 컨텐츠 -->
-    <main class="bg-gray-100 ml-38 pt-16 pl-6 min-h-screen">
-      <RouterView />
-    </main>
+    <div class="flex flex-1">
+      <Sidebar />
+      <main class="bg-gray-100 flex-1 pt-16 pl-4">
+        <RouterView />
+      </main>
+    </div>
+  </div> -->
+  <div class="min-h-screen flex flex-col">
+    <Header class="fixed top-0 left-0 right-0 z-30" />
+
+    <div class="flex flex-1 mt-14"> <!-- Header 높이만큼 margin -->
+      <Sidebar />
+      <main class="bg-gray-100 flex-1 p-6 overflow-x-auto">
+        <RouterView />
+      </main>
+    </div>
   </div>
 
 

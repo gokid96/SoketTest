@@ -4,7 +4,7 @@
 
     <request-section @message-received="handleMessageReceived" @message-sent="handleMessageSent"
       @connection-status="handleConnectionStatus" />
-    <response-section :response="responseData" :messages="messages" />
+    <response-section :response="responseData" :messages="messages" @clear-messages="handleClearMessages" />
   </div>
 </template>
 
@@ -22,6 +22,11 @@ function handleMessageReceived(message) {
 
 function handleMessageSent(message) {
   messages.value.unshift(message);
+}
+
+
+function handleClearMessages() {
+  messages.value = []; // 메시지 배열 초기화
 }
 
 function handleConnectionStatus(status) {
